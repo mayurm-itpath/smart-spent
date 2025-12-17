@@ -10,5 +10,7 @@ export const pageRoutes = {
   },
   user: {
     dashboard: "/user/dashboard",
+    addTransaction: '/user/add-transaction',
+    transactions: "/user/transactions",
   },
 };
