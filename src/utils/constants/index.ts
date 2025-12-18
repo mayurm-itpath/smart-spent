@@ -11,3 +11,38 @@ export const ERROR_MESSAGES = {
   504: 'Server took too long. Try again.',
   common: 'Oops! Something went wrong. Try later.',
 };
+
+export const INCOME_CATEGORIES = [
+  "Salary",
+  "Business",
+  "Investments",
+  "Freelancing",
+  "Interest",
+  "Rental Income",
+  "Bonus",
+  "Commission",
+  "Side Hustle",
+  "Other Income",
+];
+
+export const EXPENSE_CATEGORIES = [
+  "Food & Dining",
+  "Groceries",
+  "Shopping",
+  "Travel",
+  "Health",
+  "Medicine",
+  "Education",
+  "Bills & Utilities",
+  "Rent",
+  "Insurance",
+  "Loan EMI",
+  "Entertainment",
+  "Fuel",
+  "Subscriptions",
+  "Personal Care",
+  "Maintenance",
+  "Gifts & Donations",
+  "Taxes",
+  "Other Expense",
+];

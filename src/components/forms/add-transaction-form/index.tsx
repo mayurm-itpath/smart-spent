@@ -16,6 +16,13 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAppStore } from "@/store/use-app-store";
 import { pageRoutes } from "@/utils/constants/routes";
 import { apiAsyncHandler } from "@/utils/helpers";
@@ -25,6 +32,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { INCOME_CATEGORIES, EXPENSE_CATEGORIES } from "@/utils/constants";
 
 interface AddTransactionFormType {
   amount: number;
@@ -50,10 +58,15 @@ const AddTransactionForm = () => {
     handleSubmit,
     formState: { errors },
     control,
+    watch,
+    setValue,
   } = useForm({
     defaultValues: initialFormData,
     resolver: zodResolver(transactionValidation),
   });
+
+  const transactionCategory =
+    watch("type") === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
 
   const mutation = useMutation({
     mutationFn: (data: any) => {
@@ -112,15 +125,23 @@ const AddTransactionForm = () => {
                         {/* Type */}
                         <Field>
                           <FieldLabel htmlFor="type">Type</FieldLabel>
-                          <select
-                            {...register("type")}
-                            id="type"
-                            className="w-full rounded-md border px-3 py-2 text-sm"
+
+                          <Select
+                            onValueChange={(value) =>
+                              setValue("type", value as "income" | "expense")
+                            }
+                            defaultValue={watch("type")}
                           >
-                            <option value="">Select type</option>
-                            <option value="income">Income</option>
-                            <option value="expense">Expense</option>
-                          </select>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select type" />
+                            </SelectTrigger>
+
+                            <SelectContent>
+                              <SelectItem value="income">Income</SelectItem>
+                              <SelectItem value="expense">Expense</SelectItem>
+                            </SelectContent>
+                          </Select>
+
                           {errors.type && (
                             <FieldDescription className="text-red-500">
                               {errors.type.message}
@@ -131,12 +152,27 @@ const AddTransactionForm = () => {
                         {/* Category */}
                         <Field>
                           <FieldLabel htmlFor="category">Category</FieldLabel>
-                          <Input
-                            {...register("category")}
-                            id="category"
-                            type="text"
-                            placeholder="e.g. Food, Salary, Rent"
-                          />
+
+                          <Select
+                            disabled={!watch("type")}
+                            onValueChange={(value) =>
+                              setValue("category", value)
+                            }
+                            defaultValue={watch("category")}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select category" />
+                            </SelectTrigger>
+
+                            <SelectContent>
+                              {transactionCategory.map((category) => (
+                                <SelectItem key={category} value={category}>
+                                  {category}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+
                           {errors.category && (
                             <FieldDescription className="text-red-500">
                               {errors.category.message}

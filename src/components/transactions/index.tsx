@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api/api";
 import { useState } from "react";
 import { Dialog } from "../ui/dialog";
@@ -28,6 +28,14 @@ import { RadioGroup } from "@radix-ui/react-radio-group";
 import { RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "@/utils/constants";
 
 const Transactions = () => {
   const [transactionActions, setTransactionActions] = useState({
@@ -36,15 +44,22 @@ const Transactions = () => {
     details: {},
     deleteId: "",
   });
+  const [transactionFilter, setTransactionFilter] = useState<{
+    [key: string]: any;
+  }>({});
+  const queryClient = useQueryClient();
 
   const { data: transactions } = useQuery({
-    queryKey: ["transactions"],
+    queryKey: ["transactions", transactionFilter],
     queryFn: async () => {
-      const res: any = await api.transactions.getAllTransactions({});
+      const res: any = await api.transactions.getAllTransactions({
+        data: transactionFilter,
+      });
       return res.data.transactions;
     },
   });
 
+  // Handle view details action
   const handleViewDetails = (transaction: any) => {
     setTransactionActions({
       ...transactionActions,
@@ -53,11 +68,25 @@ const Transactions = () => {
     });
   };
 
+  // Handle delete action
   const handleDelete = (transactionId: string) => {
     setTransactionActions({
       ...transactionActions,
       deleteId: transactionId,
       deleteDialog: true,
+    });
+  };
+
+  // Handle transaction list filter
+  const handleTransactionListFilter = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setTransactionFilter({
+      ...transactionFilter,
+      params: { ...transactionFilter.params, [e.target.name]: e.target.value },
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["transactions", transactionFilter],
     });
   };
 
@@ -71,6 +100,108 @@ const Transactions = () => {
             </CardHeader>
 
             <CardContent>
+              <div className="flex flex-col gap-3">
+                <div className="font-semibold">Filter By:</div>
+
+                {/* Transaction Date Filter */}
+                <div className="flex items-center gap-2">
+                  <div>Date:</div>
+                  <RadioGroup
+                    defaultValue="all"
+                    onValueChange={(value) =>
+                      handleTransactionListFilter({
+                        target: { value, name: "date" },
+                      } as React.ChangeEvent<HTMLInputElement>)
+                    }
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <RadioGroupItem value="all" id="all" />
+                        <Label htmlFor="all">All</Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <RadioGroupItem value="last-week" id="last-week" />
+                        <Label htmlFor="last-week">Last Week</Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <RadioGroupItem value="last-month" id="last-month" />
+                        <Label htmlFor="last-month">Last Month</Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <RadioGroupItem value="last-year" id="last-year" />
+                        <Label htmlFor="last-year">Last Year</Label>
+                      </div>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                {/* Transaction Type Filter */}
+                <div className="flex items-center gap-2">
+                  <div>Type:</div>
+                  <RadioGroup
+                    defaultValue=""
+                    onValueChange={(value) =>
+                      handleTransactionListFilter({
+                        target: { value, name: "type" },
+                      } as React.ChangeEvent<HTMLInputElement>)
+                    }
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <RadioGroupItem value="" id="all" />
+                        <Label htmlFor="all">All</Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <RadioGroupItem value="income" id="income" />
+                        <Label htmlFor="income">Income</Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <RadioGroupItem value="expense" id="expense" />
+                        <Label htmlFor="expense">Expense</Label>
+                      </div>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                {/* Transaction category Filter */}
+                <div className="flex items-center gap-2">
+                  <div>Category:</div>
+                  <Select
+                    defaultValue=""
+                    onValueChange={(value) =>
+                      handleTransactionListFilter({
+                        target: {
+                          value: value === "all" ? "" : value,
+                          name: "category",
+                        },
+                      } as React.ChangeEvent<HTMLInputElement>)
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All</SelectItem>
+                      {transactionFilter.params?.type === "income" &&
+                        INCOME_CATEGORIES.map((category) => (
+                          <SelectItem key={category} value={category}>
+                            {category}
+                          </SelectItem>
+                        ))}
+
+                      {transactionFilter.params?.type === "expense" &&
+                        EXPENSE_CATEGORIES.map((category) => (
+                          <SelectItem key={category} value={category}>
+                            {category}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <Separator className="my-4" />
+
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -82,7 +213,7 @@ const Transactions = () => {
                 </TableHeader>
 
                 <TableBody>
-                  {transactions &&
+                  {transactions?.length > 0 ? (
                     transactions.map((transaction: any) => (
                       <TableRow key={transaction._id}>
                         <TableCell
@@ -92,7 +223,7 @@ const Transactions = () => {
                               : "text-green-600"
                           }
                         >
-                          {transaction.type === "expense" ? "-" : "+"}{" "}
+                          {transaction.type === "expense" ? "-" : "+"}
                           {transaction.amount}
                         </TableCell>
                         <TableCell>{transaction.category}</TableCell>
@@ -124,7 +255,16 @@ const Transactions = () => {
                           </DropdownMenu>
                         </TableCell>
                       </TableRow>
-                    ))}
+                    ))
+                  ) : (
+                    <>
+                      <TableRow>
+                        <TableCell colSpan={4} className="text-center py-4">
+                          No transactions found.
+                        </TableCell>
+                      </TableRow>
+                    </>
+                  )}
                 </TableBody>
               </Table>
             </CardContent>

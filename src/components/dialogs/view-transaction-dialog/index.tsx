@@ -18,9 +18,14 @@ const ViewTransactionDialog = ({ transaction }: ViewTransactionDialogProps) => {
         </DialogHeader>
 
         <div>
-          <div>Amount: {transaction.type === "expense" ? "-" : "+"} {transaction.amount}</div>
+          <div>
+            Amount: {transaction.type === "expense" ? "-" : "+"}
+            {transaction.amount}
+          </div>
           <div>Category: {transaction.category}</div>
-          <div>Description: {transaction.description}</div>
+          {transaction.description && (
+            <div>Description: {transaction.description}</div>
+          )}
           <div>Date: {formatDateToDDMMYYYY(new Date(transaction.date))}</div>
         </div>
       </DialogContent>
