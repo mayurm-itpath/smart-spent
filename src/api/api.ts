@@ -1,4 +1,3 @@
-import { get } from "http";
 import client, { METHODS } from "./client";
 
 export const api = {
@@ -63,5 +62,22 @@ export const api = {
         method: METHODS.DELETE,
         ...configs,
       }),
+  },
+  user: {
+    updateUserProfile: ({
+      data,
+      ...configs
+    }: {
+      data: any;
+      [key: string]: any;
+    }) =>
+      client({
+        url: "/api/user/profile",
+        method: METHODS.PATCH,
+        data,
+        ...configs,
+      }),
+    deleteAccount: ({ ...configs }: { [key: string]: any }) =>
+      client({ url: "/api/user/profile", method: METHODS.DELETE, ...configs }),
   },
 };

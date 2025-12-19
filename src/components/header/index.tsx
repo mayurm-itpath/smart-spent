@@ -3,10 +3,11 @@ import { pageRoutes } from "@/utils/constants/routes";
 import Image from "next/image";
 import Link from "next/link";
 import ToggleThemeButton from "../buttons/toggle-theme-butthon";
-import LogoutButton from "../buttons/logout-button";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { Button } from "../ui/button";
+import { CircleUserRound } from "lucide-react";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 
 const Header = async () => {
   const session = await getServerSession(authOptions);
@@ -51,7 +52,15 @@ const Header = async () => {
             <ToggleThemeButton />
             {session ? (
               <>
-                <LogoutButton />
+                <Link href={pageRoutes.user.profile}>
+                  <Avatar className="h-10 w-10">
+                    <AvatarFallback>
+                      {session.user?.name?.charAt(0).toUpperCase() || (
+                        <CircleUserRound />
+                      )}
+                    </AvatarFallback>
+                  </Avatar>
+                </Link>
               </>
             ) : (
               <>

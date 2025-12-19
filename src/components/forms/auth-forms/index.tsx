@@ -76,6 +76,7 @@ const AuthForm = ({ isLogin = false }: AuthFormProps) => {
         if (res?.ok) {
           toast.success("Logged in successfully");
           router.push(pageRoutes.user.dashboard);
+          router.refresh();
         } else {
           toast.error("Login failed. Please check your credentials.");
         }

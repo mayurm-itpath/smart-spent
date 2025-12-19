@@ -12,5 +12,6 @@ export const pageRoutes = {
     dashboard: "/user/dashboard",
     addTransaction: '/user/add-transaction',
     transactions: "/user/transactions",
+    profile: "/user/profile",
   },
 };

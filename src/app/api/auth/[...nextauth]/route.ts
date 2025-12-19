@@ -16,7 +16,6 @@ export const authOptions: AuthOptions = {
       async authorize(credentials) {
         try {
           await connectDB();
-
           if (!credentials?.email || !credentials?.password)
             throw new Error("Email and password are required");
 
@@ -86,7 +85,8 @@ export const authOptions: AuthOptions = {
         return false;
       }
     },
-    async jwt({ token, user }) {
+
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.user = {
           id: user.id,
@@ -94,6 +94,14 @@ export const authOptions: AuthOptions = {
           email: user.email,
         };
       }
+
+      if (trigger === "update" && session) {
+        token.user = {
+          ...(token.user as any),
+          ...session,
+        };
+      }
+
       return token;
     },
     async session({ session, token }) {
