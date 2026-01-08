@@ -15,7 +15,6 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -33,6 +32,9 @@ import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { INCOME_CATEGORIES, EXPENSE_CATEGORIES } from "@/utils/constants";
+import { motion } from "framer-motion";
+import FormInput from "@/components/inputs/form-input";
+import { Textarea } from "@/components/ui/textarea";
 
 interface AddTransactionFormType {
   amount: number;
@@ -52,6 +54,8 @@ const AddTransactionForm = () => {
   };
   const router = useRouter();
   const { userInfo } = useAppStore();
+
+  const MotionButton = motion.create(Button);
 
   const {
     register,
@@ -107,40 +111,38 @@ const AddTransactionForm = () => {
                     <form onSubmit={handleSubmit(onSubmit)}>
                       <FieldGroup>
                         {/* Amount */}
-                        <Field>
-                          <FieldLabel htmlFor="amount">Amount</FieldLabel>
-                          <Input
-                            {...register("amount", { valueAsNumber: true })}
-                            id="amount"
-                            type="number"
-                            placeholder="Enter amount"
-                          />
-                          {errors.amount && (
-                            <FieldDescription className="text-red-500">
-                              {errors.amount.message}
-                            </FieldDescription>
-                          )}
-                        </Field>
+                        <FormInput
+                          {...register("amount", { valueAsNumber: true })}
+                          id="amount"
+                          label="Amount"
+                          type="number"
+                          placeholder="Enter Amount"
+                          error={errors.amount}
+                        />
 
                         {/* Type */}
                         <Field>
                           <FieldLabel htmlFor="type">Type</FieldLabel>
-
-                          <Select
-                            onValueChange={(value) =>
-                              setValue("type", value as "income" | "expense")
-                            }
-                            defaultValue={watch("type")}
+                          <motion.div
+                            animate={errors.type && { x: [-4, 4, -4, 4, 0] }}
+                            transition={{ duration: 0.4 }}
                           >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select type" />
-                            </SelectTrigger>
+                            <Select
+                              onValueChange={(value) =>
+                                setValue("type", value as "income" | "expense")
+                              }
+                              defaultValue={watch("type")}
+                            >
+                              <SelectTrigger id="type" className="w-full">
+                                <SelectValue placeholder="Select type" />
+                              </SelectTrigger>
 
-                            <SelectContent>
-                              <SelectItem value="income">Income</SelectItem>
-                              <SelectItem value="expense">Expense</SelectItem>
-                            </SelectContent>
-                          </Select>
+                              <SelectContent>
+                                <SelectItem value="income">Income</SelectItem>
+                                <SelectItem value="expense">Expense</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </motion.div>
 
                           {errors.type && (
                             <FieldDescription className="text-red-500">
@@ -152,26 +154,32 @@ const AddTransactionForm = () => {
                         {/* Category */}
                         <Field>
                           <FieldLabel htmlFor="category">Category</FieldLabel>
-
-                          <Select
-                            disabled={!watch("type")}
-                            onValueChange={(value) =>
-                              setValue("category", value)
+                          <motion.div
+                            animate={
+                              errors.category && { x: [-4, 4, -4, 4, 0] }
                             }
-                            defaultValue={watch("category")}
+                            transition={{ duration: 0.4 }}
                           >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select category" />
-                            </SelectTrigger>
+                            <Select
+                              disabled={!watch("type")}
+                              onValueChange={(value) =>
+                                setValue("category", value)
+                              }
+                              defaultValue={watch("category")}
+                            >
+                              <SelectTrigger id="category" className="w-full">
+                                <SelectValue placeholder="Select category" />
+                              </SelectTrigger>
 
-                            <SelectContent>
-                              {transactionCategory.map((category) => (
-                                <SelectItem key={category} value={category}>
-                                  {category}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                              <SelectContent>
+                                {transactionCategory.map((category) => (
+                                  <SelectItem key={category} value={category}>
+                                    {category}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </motion.div>
 
                           {errors.category && (
                             <FieldDescription className="text-red-500">
@@ -183,17 +191,23 @@ const AddTransactionForm = () => {
                         {/* Date */}
                         <Field>
                           <FieldLabel htmlFor="date">Date</FieldLabel>
-                          <Controller
-                            name="date"
-                            control={control}
-                            defaultValue={new Date()}
-                            render={({ field }) => (
-                              <DatePicker
-                                value={field.value}
-                                onChange={field.onChange}
-                              />
-                            )}
-                          />
+                          <motion.div
+                            animate={errors.date && { x: [-4, 4, -4, 4, 0] }}
+                            transition={{ duration: 0.4 }}
+                          >
+                            <Controller
+                              name="date"
+                              control={control}
+                              defaultValue={new Date()}
+                              render={({ field }) => (
+                                <DatePicker
+                                  id="date"
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                />
+                              )}
+                            />
+                          </motion.div>
                           {errors.date && (
                             <FieldDescription className="text-red-500">
                               {errors.date.message}
@@ -206,12 +220,18 @@ const AddTransactionForm = () => {
                           <FieldLabel htmlFor="description">
                             Description (optional)
                           </FieldLabel>
-                          <Input
-                            {...register("description")}
-                            id="description"
-                            type="text"
-                            placeholder="Notes about this transaction"
-                          />
+                          <motion.div
+                            animate={
+                              errors.description && { x: [-4, 4, -4, 4, 0] }
+                            }
+                            transition={{ duration: 0.4 }}
+                          >
+                            <Textarea
+                              {...register("description")}
+                              id="description"
+                              placeholder="Notes about this transaction"
+                            />
+                          </motion.div>
                           {errors.description && (
                             <FieldDescription className="text-red-500">
                               {errors.description.message}
@@ -221,9 +241,14 @@ const AddTransactionForm = () => {
 
                         {/* Actions */}
                         <Field>
-                          <Button type="submit" className="w-full">
+                          <MotionButton
+                            type="submit"
+                            className="w-full shadow-md"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
                             Add Transaction
-                          </Button>
+                          </MotionButton>
                         </Field>
                       </FieldGroup>
                     </form>

@@ -33,18 +33,21 @@ export const GET = async (request: NextRequest) => {
       startDate.setFullYear(today.getFullYear() - 1);
     }
 
-    const query = startDate
-      ? {
-          userId,
-          date: { $gte: startDate, $lte: today },
-          type: type || { $in: ["income", "expense"] },
-          category: category || { $exists: true },
-        }
-      : {
-          userId,
-          type: type || { $in: ["income", "expense"] },
-          category: category || { $exists: true },
-        };
+    const query: { [key: string]: any } = {
+      userId,
+    };
+
+    if (startDate) {
+      query.date = { $gte: startDate, $lte: today };
+    }
+
+    if (category) {
+      query.category = category;
+    }
+
+    if (type) {
+      query.type = type;
+    }
 
     const transactions = await Transaction.find(query).sort({ date: -1 });
 

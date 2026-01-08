@@ -11,6 +11,7 @@ import {
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 const DeleteTransactionDialog = ({
   transactionId,
@@ -18,6 +19,7 @@ const DeleteTransactionDialog = ({
   transactionId: string;
 }) => {
   const queryClient = useQueryClient();
+  const MotionButton = motion.create(Button);
 
   const mutation = useMutation({
     mutationFn: async (id: string) => {
@@ -44,10 +46,24 @@ const DeleteTransactionDialog = ({
         </DialogHeader>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">No</Button>
+            <MotionButton
+              variant="outline"
+              className="shadow-md"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              No
+            </MotionButton>
           </DialogClose>
           <DialogClose asChild>
-            <Button onClick={() => mutation.mutate(transactionId)}>Yes</Button>
+            <MotionButton
+              className="shadow-md"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => mutation.mutate(transactionId)}
+            >
+              Yes
+            </MotionButton>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

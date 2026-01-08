@@ -27,6 +27,8 @@ import { api } from "@/api/api";
 import { signIn } from "next-auth/react";
 import { apiAsyncHandler } from "@/utils/helpers";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
+import FormInput from "@/components/inputs/form-input";
 
 interface AuthFormProps {
   isLogin?: boolean;
@@ -42,6 +44,8 @@ interface AuthFormData {
 const AuthForm = ({ isLogin = false }: AuthFormProps) => {
   const validationSchema = isLogin ? loginValidation : signupValidation;
   const router = useRouter();
+
+  const MotionButton = motion.create(Button);
 
   const initialFormData: AuthFormData = isLogin
     ? {
@@ -130,37 +134,22 @@ const AuthForm = ({ isLogin = false }: AuthFormProps) => {
                     <form onSubmit={handleSubmit(onSubmit)}>
                       <FieldGroup>
                         {!isLogin && (
-                          <Field>
-                            <FieldLabel htmlFor="name">Name</FieldLabel>
-                            <Input
-                              {...register("name")}
-                              id="name"
-                              type="text"
-                              placeholder="Name"
-                              required
-                            />
-                            {errors.name && (
-                              <FieldDescription className="text-red-600">
-                                {errors.name.message}
-                              </FieldDescription>
-                            )}
-                          </Field>
-                        )}
-                        <Field>
-                          <FieldLabel htmlFor="email">Email</FieldLabel>
-                          <Input
-                            {...register("email")}
-                            id="email"
-                            type="email"
-                            placeholder="Email"
-                            required
+                          <FormInput
+                            {...register("name")}
+                            id="name"
+                            label="Name"
+                            placeholder="Name"
+                            error={errors.name}
                           />
-                          {errors.email && (
-                            <FieldDescription className="text-red-600">
-                              {errors.email.message}
-                            </FieldDescription>
-                          )}
-                        </Field>
+                        )}
+                        <FormInput
+                          {...register("email")}
+                          id="email"
+                          label="Email"
+                          type="email"
+                          placeholder="Email"
+                          error={errors.email}
+                        />
                         <Field>
                           <div className="flex items-center">
                             <FieldLabel htmlFor="password">Password</FieldLabel>
@@ -173,13 +162,19 @@ const AuthForm = ({ isLogin = false }: AuthFormProps) => {
                               </Link>
                             )}
                           </div>
-                          <Input
-                            {...register("password")}
-                            id="password"
-                            type="password"
-                            placeholder="Password"
-                            required
-                          />{" "}
+                          <motion.div
+                            animate={
+                              errors.password && { x: [-4, 4, -4, 4, 0] }
+                            }
+                            transition={{ duration: 0.4 }}
+                          >
+                            <Input
+                              {...register("password")}
+                              id="password"
+                              type="password"
+                              placeholder="Password"
+                            />
+                          </motion.div>
                           {errors.password && (
                             <FieldDescription className="text-red-600">
                               {errors.password.message}
@@ -187,39 +182,38 @@ const AuthForm = ({ isLogin = false }: AuthFormProps) => {
                           )}
                         </Field>
                         {!isLogin && (
-                          <Field>
-                            <FieldLabel htmlFor="confirm-password">
-                              Confirm Password
-                            </FieldLabel>
-                            <Input
-                              {...register("confirmPassword")}
-                              id="confirm-password"
-                              type="password"
-                              placeholder="Confirm Password"
-                              required
-                            />
-                            {errors.confirmPassword && (
-                              <FieldDescription className="text-red-600">
-                                {errors.confirmPassword.message}
-                              </FieldDescription>
-                            )}
-                          </Field>
+                          <FormInput
+                            {...register("confirmPassword")}
+                            id="confirm-password"
+                            label="Confirm Password"
+                            type="password"
+                            placeholder="Confirm Password"
+                            error={errors.confirmPassword}
+                          />
                         )}
                         <Field>
-                          <Button type="submit">
+                          <MotionButton
+                            type="submit"
+                            className="shadow-md"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
                             {isLogin ? "Login" : "Sign up"}
-                          </Button>
+                          </MotionButton>
 
-                          <Button
+                          <MotionButton
                             variant="outline"
                             type="button"
+                            className="shadow-md"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={handleGoogleAuth}
                           >
                             <FaGoogle />{" "}
                             {isLogin
                               ? "Login with Google"
                               : "Sign up with Google"}
-                          </Button>
+                          </MotionButton>
 
                           <FieldDescription className="text-center">
                             {isLogin ? (

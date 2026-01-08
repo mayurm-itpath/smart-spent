@@ -4,11 +4,8 @@ import { Button } from "@/components/ui/button";
 import { DialogContent, DialogHeader } from "@/components/ui/dialog";
 import {
   Field,
-  FieldDescription,
   FieldGroup,
-  FieldLabel,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { useAppStore } from "@/store/use-app-store";
 import { apiAsyncHandler } from "@/utils/helpers";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +17,8 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
+import { motion } from "framer-motion";
+import FormInput from "@/components/inputs/form-input";
 
 interface EditProfileDialogProps {
   detailsToChange: any;
@@ -50,6 +49,7 @@ const EditProfileDialog = ({
   closeDialog,
 }: EditProfileDialogProps) => {
   const { userInfo, setUserInfo } = useAppStore();
+  const MotionButton = motion.create(Button);
 
   const {
     register,
@@ -123,17 +123,22 @@ const EditProfileDialog = ({
           {detailsToChange.editProfile && (
             <>
               <FieldGroup>
+                <FormInput
+                  {...register("name")}
+                  id="name"
+                  label="Name"
+                  placeholder="Name"
+                  error={errors.name}
+                />
                 <Field>
-                  <FieldLabel>Name</FieldLabel>
-                  <Input {...register("name")} placeholder="Name" />
-                  {errors.name && (
-                    <FieldDescription className="text-red-500">
-                      {errors.name.message}
-                    </FieldDescription>
-                  )}
-                </Field>
-                <Field>
-                  <Button type="submit">Save Changes</Button>
+                  <MotionButton
+                    type="submit"
+                    className="shadow-md"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Save Changes
+                  </MotionButton>
                 </Field>
               </FieldGroup>
             </>
@@ -143,47 +148,39 @@ const EditProfileDialog = ({
           {detailsToChange.changePassword && (
             <>
               <FieldGroup>
+                <FormInput
+                  {...register("password")}
+                  id="password"
+                  type="password"
+                  label="Current Password"
+                  placeholder="Current Password"
+                  error={errors.password}
+                />
+                <FormInput
+                  {...register("newPassword")}
+                  id="newPassword"
+                  type="password"
+                  label="New Password"
+                  placeholder="New Password"
+                  error={errors.newPassword}
+                />
+                <FormInput
+                  {...register("confirmNewPassword")}
+                  id="confirmPassword"
+                  type="password"
+                  label="Confirm Password"
+                  placeholder="Confirm Password"
+                  error={errors.confirmNewPassword}
+                />
                 <Field>
-                  <FieldLabel>Current Password</FieldLabel>
-                  <Input
-                    {...register("password")}
-                    type="password"
-                    placeholder="Current Password"
-                  />
-                  {errors.password && (
-                    <FieldDescription className="text-red-500">
-                      {errors.password.message}
-                    </FieldDescription>
-                  )}
-                </Field>
-                <Field>
-                  <FieldLabel>New Password</FieldLabel>
-                  <Input
-                    {...register("newPassword")}
-                    type="password"
-                    placeholder="New Password"
-                  />
-                  {errors.newPassword && (
-                    <FieldDescription className="text-red-500">
-                      {errors.newPassword.message}
-                    </FieldDescription>
-                  )}
-                </Field>
-                <Field>
-                  <FieldLabel>Confirm New Password</FieldLabel>
-                  <Input
-                    {...register("confirmNewPassword")}
-                    type="password"
-                    placeholder="Confirm New Password"
-                  />
-                  {errors.confirmNewPassword && (
-                    <FieldDescription className="text-red-500">
-                      {errors.confirmNewPassword.message}
-                    </FieldDescription>
-                  )}
-                </Field>
-                <Field>
-                  <Button type="submit">Change Password</Button>
+                  <MotionButton
+                    type="submit"
+                    className="shadow-md"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Change Password
+                  </MotionButton>
                 </Field>
               </FieldGroup>
             </>

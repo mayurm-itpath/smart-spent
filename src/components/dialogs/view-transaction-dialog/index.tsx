@@ -19,8 +19,8 @@ const ViewTransactionDialog = ({ transaction }: ViewTransactionDialogProps) => {
 
         <div>
           <div>
-            Amount: {transaction.type === "expense" ? "-" : "+"}
-            {transaction.amount}
+            Amount: {transaction.type === "expense" ? "" : "+"}
+            {transaction.amount} INR
           </div>
           <div>Category: {transaction.category}</div>
           {transaction.description && (

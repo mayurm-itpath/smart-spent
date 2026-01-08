@@ -15,9 +15,10 @@ import { cn } from "@/lib/utils";
 interface DatePickerProps {
   value?: Date;
   onChange: (date: Date | undefined) => void;
+  id?: string;
 }
 
-const DatePicker = ({ value, onChange }: DatePickerProps) => {
+const DatePicker = ({ value, onChange, id }: DatePickerProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -35,6 +36,7 @@ const DatePicker = ({ value, onChange }: DatePickerProps) => {
 
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
+          id={id}
           mode="single"
           selected={value}
           onSelect={onChange}

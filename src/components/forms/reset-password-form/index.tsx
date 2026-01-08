@@ -1,5 +1,6 @@
-'use client';
+"use client";
 import { api } from "@/api/api";
+import FormInput from "@/components/inputs/form-input";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,15 +11,13 @@ import {
 } from "@/components/ui/card";
 import {
   Field,
-  FieldDescription,
   FieldGroup,
-  FieldLabel,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { pageRoutes } from "@/utils/constants/routes";
 import { apiAsyncHandler } from "@/utils/helpers";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import { ChevronLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -43,6 +42,7 @@ const ResetPasswordForm = () => {
 
   const params = useParams<{ token: string }>();
   const router = useRouter();
+  const MotionButton = motion.create(Button);
 
   const {
     register,
@@ -96,49 +96,39 @@ const ResetPasswordForm = () => {
                 <CardContent>
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <FieldGroup>
-                      <Field>
-                        <FieldLabel className="leading-5" htmlFor="newPassword">
-                          New Password
-                        </FieldLabel>
-                        <Input
-                          {...register("newPassword")}
-                          type="password"
-                          id="newPassword"
-                          placeholder="Enter your new password"
-                        />
-                        {errors.newPassword && (
-                          <FieldDescription className="text-red-600">
-                            {errors.newPassword.message}
-                          </FieldDescription>
-                        )}
-                      </Field>
+                      <FormInput
+                        {...register("newPassword")}
+                        id="newPassword"
+                        label="New Password"
+                        type="password"
+                        placeholder="Enter new password"
+                        error={errors.newPassword}
+                      />
+
+                      <FormInput
+                        {...register("confirmNewPassword")}
+                        id="confirmNewPassword"
+                        label="Confirm New Password"
+                        type="password"
+                        placeholder="Confirm your new password"
+                        error={errors.confirmNewPassword}
+                      />
 
                       <Field>
-                        <FieldLabel
-                          className="leading-5"
-                          htmlFor="confirmNewPassword"
-                        >
-                          Confirm New Password
-                        </FieldLabel>
-                        <Input
-                          {...register("confirmNewPassword")}
-                          type="password"
-                          id="confirmNewPassword"
-                          placeholder="Confirm your new password"
-                        />
-                      </Field>
-
-                      <Field>
-                        <Button className="w-full" type="submit">
+                        <MotionButton className="w-full" type="submit">
                           Reset Password
-                        </Button>
+                        </MotionButton>
 
-                        <Button variant={"outline"} className="w-full" asChild>
+                        <MotionButton
+                          variant={"outline"}
+                          className="w-full"
+                          asChild
+                        >
                           <Link href={pageRoutes.auth.login}>
                             <ChevronLeftIcon className="size-5 transition-transform duration-200 group-hover:-translate-x-0.5" />
                             <span>Back to login</span>
                           </Link>
-                        </Button>
+                        </MotionButton>
                       </Field>
                     </FieldGroup>
                   </form>

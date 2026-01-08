@@ -36,6 +36,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "@/utils/constants";
+import TransactionsTableSkeleton from "../skeletons/transactions-table-skeleton";
 
 const Transactions = () => {
   const [transactionActions, setTransactionActions] = useState({
@@ -49,7 +50,7 @@ const Transactions = () => {
   }>({});
   const queryClient = useQueryClient();
 
-  const { data: transactions } = useQuery({
+  const { data: transactions, isLoading } = useQuery({
     queryKey: ["transactions", transactionFilter],
     queryFn: async () => {
       const res: any = await api.transactions.getAllTransactions({
@@ -213,56 +214,66 @@ const Transactions = () => {
                 </TableHeader>
 
                 <TableBody>
-                  {transactions?.length > 0 ? (
-                    transactions.map((transaction: any) => (
-                      <TableRow key={transaction._id}>
-                        <TableCell
-                          className={
-                            transaction.type === "expense"
-                              ? "text-red-600"
-                              : "text-green-600"
-                          }
-                        >
-                          {transaction.type === "expense" ? "-" : "+"}
-                          {transaction.amount}
-                        </TableCell>
-                        <TableCell>{transaction.category}</TableCell>
-                        <TableCell>
-                          {formatDateToDDMMYYYY(new Date(transaction.date))}
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant={"ghost"}
-                                className="rounded-full"
-                              >
-                                <EllipsisVertical size={20} />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                              <DropdownMenuItem
-                                onClick={() => handleViewDetails(transaction)}
-                              >
-                                View Details
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleDelete(transaction._id)}
-                              >
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))
+                  {isLoading ? (
+                    <TransactionsTableSkeleton />
                   ) : (
                     <>
-                      <TableRow>
-                        <TableCell colSpan={4} className="text-center py-4">
-                          No transactions found.
-                        </TableCell>
-                      </TableRow>
+                      {transactions?.length > 0 ? (
+                        transactions.map((transaction: any) => (
+                          <TableRow key={transaction._id}>
+                            <TableCell
+                              className={
+                                transaction.type === "expense"
+                                  ? "text-red-600"
+                                  : "text-green-600"
+                              }
+                            >
+                              {transaction.type === "expense" ? "" : "+"}
+                              {transaction.amount} INR
+                            </TableCell>
+                            <TableCell>{transaction.category}</TableCell>
+                            <TableCell>
+                              {formatDateToDDMMYYYY(new Date(transaction.date))}
+                            </TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button
+                                    variant={"ghost"}
+                                    className="rounded-full"
+                                  >
+                                    <EllipsisVertical size={20} />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      handleViewDetails(transaction)
+                                    }
+                                  >
+                                    View Details
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      handleDelete(transaction._id)
+                                    }
+                                  >
+                                    Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <>
+                          <TableRow>
+                            <TableCell colSpan={4} className="text-center py-4">
+                              No transactions found.
+                            </TableCell>
+                          </TableRow>
+                        </>
+                      )}
                     </>
                   )}
                 </TableBody>

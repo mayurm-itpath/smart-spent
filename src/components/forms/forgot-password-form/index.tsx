@@ -1,5 +1,6 @@
 "use client";
 import { api } from "@/api/api";
+import FormInput from "@/components/inputs/form-input";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,15 +11,13 @@ import {
 } from "@/components/ui/card";
 import {
   Field,
-  FieldDescription,
   FieldGroup,
-  FieldLabel,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { pageRoutes } from "@/utils/constants/routes";
 import { apiAsyncHandler } from "@/utils/helpers";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import { ChevronLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -54,6 +53,8 @@ const ForgotPassword = () => {
     },
   });
 
+  const MotionButton = motion.create(Button);
+
   const onSubmit = (data: z.infer<typeof forgotPasswordValidation>) => {
     apiAsyncHandler(async () => {
       await mutation.mutateAsync(data);
@@ -79,34 +80,30 @@ const ForgotPassword = () => {
                   {/* ForgotPassword Form */}
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <FieldGroup>
-                      <Field>
-                        <FieldLabel className="leading-5" htmlFor="userEmail">
-                          Email address
-                        </FieldLabel>
-                        <Input
-                          {...register("email")}
-                          type="email"
-                          id="userEmail"
-                          placeholder="Enter your email address"
-                        />
-                        {errors.email && (
-                          <FieldDescription className="mt-1 text-sm text-red-600">
-                            {errors.email.message}
-                          </FieldDescription>
-                        )}
-                      </Field>
+                      <FormInput
+                        {...register("email")}
+                        id="userEmail"
+                        label="Email Address"
+                        type="email"
+                        placeholder="Enter Email Address"
+                        error={errors.email}
+                      />
 
                       <Field>
-                        <Button className="w-full" type="submit">
+                        <MotionButton className="w-full" type="submit">
                           Send Reset Link
-                        </Button>
+                        </MotionButton>
 
-                        <Button variant={"outline"} className="w-full" asChild>
+                        <MotionButton
+                          variant={"outline"}
+                          className="w-full"
+                          asChild
+                        >
                           <Link href={pageRoutes.auth.login}>
                             <ChevronLeftIcon className="size-5 transition-transform duration-200 group-hover:-translate-x-0.5" />
                             <span>Back to login</span>
                           </Link>
-                        </Button>
+                        </MotionButton>
                       </Field>
                     </FieldGroup>
                   </form>

@@ -15,8 +15,13 @@ export const POST = async (req: Request) => {
       );
     }
 
+    let adjustedAmount = amount;
+    if (type === "expense") {
+      adjustedAmount = -Math.abs(amount);
+    }
+
     const newTransaction = await Transaction.create({
-      amount,
+      amount: adjustedAmount,
       type,
       category,
       date,

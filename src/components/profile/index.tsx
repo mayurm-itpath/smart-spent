@@ -17,6 +17,7 @@ import { useState } from "react";
 import { Dialog } from "../ui/dialog";
 import DeleteAccountDialog from "../dialogs/delete-account-dialog";
 import EditProfileDialog from "../dialogs/edit-profile-dialog";
+import { motion } from "framer-motion";
 
 const Profile = () => {
   const { userInfo } = useAppStore();
@@ -24,6 +25,8 @@ const Profile = () => {
     name: userInfo?.name || "User",
     email: userInfo?.email || "",
   };
+
+  const MotionButton = motion.create(Button);
 
   const [profileActionsOpen, setProfileActionsOpen] = useState({
     changePassword: false,
@@ -76,21 +79,39 @@ const Profile = () => {
                   </div>
                 </div>
 
-                <Button variant="outline" onClick={handleEditProfile}>
+                <MotionButton
+                  variant="outline"
+                  className="shadow-md"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleEditProfile}
+                >
                   Edit Profile
-                </Button>
+                </MotionButton>
               </div>
 
               <Separator />
 
               <div className="flex flex-col items-baseline gap-3">
-                <Button variant={"outline"} onClick={handleChangePassword}>
+                <MotionButton
+                  variant={"outline"}
+                  className="shadow-md"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleChangePassword}
+                >
                   Change Password
-                </Button>
+                </MotionButton>
                 <LogoutButton />
-                <Button variant="destructive" onClick={handleDeleteAccount}>
+                <MotionButton
+                  variant="destructive"
+                  className="shadow-md"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleDeleteAccount}
+                >
                   Delete Account
-                </Button>
+                </MotionButton>
               </div>
             </CardContent>
           </Card>

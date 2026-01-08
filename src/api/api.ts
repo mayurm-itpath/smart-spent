@@ -31,18 +31,6 @@ export const api = {
         method: METHODS.GET,
         ...configs,
       }),
-    getTransactionById: ({
-      id,
-      ...configs
-    }: {
-      id: string;
-      [key: string]: any;
-    }) =>
-      client({
-        url: `/api/user/transactions/${id}`,
-        method: METHODS.GET,
-        ...configs,
-      }),
     addTransaction: ({ data, ...configs }: { data: any; [key: string]: any }) =>
       client({
         url: "/api/user/add-transaction",

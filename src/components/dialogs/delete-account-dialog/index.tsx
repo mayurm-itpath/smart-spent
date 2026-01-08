@@ -15,6 +15,7 @@ import { apiAsyncHandler } from "@/utils/helpers";
 import { useMutation } from "@tanstack/react-query";
 import { signOut } from "next-auth/react";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 const DeleteAccountDialog = () => {
   const { clearUserInfo } = useAppStore();
@@ -32,6 +33,7 @@ const DeleteAccountDialog = () => {
       toast.error("Failed to delete account.");
     },
   });
+  const MotionButton = motion.create(Button);
 
   const handleDeleteAccount = () => {
     apiAsyncHandler(async () => {
@@ -50,10 +52,24 @@ const DeleteAccountDialog = () => {
         </DialogHeader>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">No</Button>
+            <MotionButton
+              variant="outline"
+              className="shadow-md"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              No
+            </MotionButton>
           </DialogClose>
           <DialogClose asChild>
-            <Button onClick={handleDeleteAccount}>Yes</Button>
+            <MotionButton
+              className="shadow-md"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleDeleteAccount}
+            >
+              Yes
+            </MotionButton>
           </DialogClose>
         </DialogFooter>
       </DialogContent>
