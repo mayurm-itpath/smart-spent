@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "../../auth/[...nextauth]/route";
 import { connectDB } from "@/lib/mongoose";
+import { Transaction } from "@/models/transaction.model";
 
 export const PATCH = async (request: Request) => {
   try {
@@ -72,6 +73,8 @@ export const DELETE = async () => {
     if (!id) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
+
+    await Transaction.deleteMany({ userId: id });
 
     await User.findByIdAndDelete(id);
 
